@@ -5,18 +5,18 @@ var HEIGHT;
 var playerX, playerY, oldX, oldY;
 var tailLength;
 var direction;
-var itemX, itemY, itemType, itemCount;
+var itemX, itemY, itemType, itemCount, itemDirection;
 var points;
 var messages, comboHoverMessage;
 var lastItemTime, itemCombo;
 
 // player movement directions
-const UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3;
+const UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3, STOP = 4;
 
 // game over types
 const OFF_SCREEN = 0, TOUCHING_TAIL = 1;
 
-const PLAYER_WIDTH = 10, PLAYER_HEIGHT = 10;
+const PLAYER_WIDTH = 10, PLAYER_HEIGHT = 20;
 const MOVE_DELTA = 5; // how far the player moves per loop (in pixels)
 
 // item shape and varieties
@@ -46,20 +46,22 @@ function start() {
   oldX = []; oldY = [];
   direction = RIGHT;
   tailLength = 0;
-  itemX = []; itemY = []; itemType = [];
+  itemX = []; itemY = []; itemType = [], itemDirection = [];
   itemCount = 0;
   points = 0;
   lastItemTime = 0;
   itemCombo = 0;
   comboHoverMessage = null;
   messages = [];
-  messages.push(["gogogogogo!", 30, null, null]);
+  messages.push(["Patrik äger!!!", 30, null, null]);
 
   $(document).unbind('keydown');
   $(document).keydown(onKeyDown);
 
   // start game loop
+  
   intervalId = setInterval(draw, 100);
+  addItem();
 }
 
 // clear entire screen
@@ -70,12 +72,12 @@ function clear() {
 function drawPlayer() {
   ctx.fillStyle = PLAYER_COLOR;
   ctx.beginPath();
-  ctx.rect(playerX, playerY, 10, 10);
+  ctx.rect(playerX, playerY, PLAYER_WIDTH, PLAYER_HEIGHT);
   ctx.closePath();
   ctx.fill();
   for(i = 0; i < oldX.length; i++) {
     ctx.beginPath();
-    ctx.rect(oldX[i], oldY[i], 10, 10);
+    ctx.rect(oldX[i], oldY[i], PLAYER_WIDTH, PLAYER_HEIGHT);
     ctx.closePath();
     ctx.fill();
   }
@@ -138,14 +140,23 @@ function draw() {
 
   // move player in current direction
   switch(direction) {
-    case RIGHT: playerX += MOVE_DELTA; break;
-    case LEFT: playerX -= MOVE_DELTA; break;
+//    case RIGHT: playerX += MOVE_DELTA; break;
+//    case LEFT: playerX -= MOVE_DELTA; break;
     case UP: playerY -= MOVE_DELTA; break;
     case DOWN: playerY += MOVE_DELTA; break;
   }
+  for(var i = 0; i < itemCount; i++){
+	switch(itemDirection[i]) {
+		case RIGHT: itemX[i] += MOVE_DELTA; break;
+		case LEFT: itemX[i] -= MOVE_DELTA; break;
+		//case 0: break;
+		//case UP: playerY -= MOVE_DELTA; break;
+		//case DOWN: playerY += MOVE_DELTA; break;
+	}
+  }
 
   // adds a bonus item sometimes
-  randomlyAddItem();
+  //randomlyAddItem();
 
   // build screen
   drawItems();
@@ -166,10 +177,10 @@ function draw() {
 // handle keys while game is running
 function onKeyDown(evt) {
   switch(evt.keyCode) {
-    case 32: tailLength += 5; break;
-    case 37: if(tailLength == 0 || direction != RIGHT) direction = LEFT; break;
+    case 32: direction = STOP; break;
+    //case 37: if(tailLength == 0 || direction != RIGHT) direction = LEFT; break;
     case 38: if(tailLength == 0 || direction != DOWN) direction = UP; break;
-    case 39: if(tailLength == 0 || direction != LEFT) direction = RIGHT; break;
+    //case 39: if(tailLength == 0 || direction != LEFT) direction = RIGHT; break;
     case 40: if(tailLength == 0 || direction != UP) direction = DOWN; break;
     case 88: cheatAddFourCombo(); break;
   }
@@ -241,7 +252,9 @@ function addItem() {
   itemX[itemCount] = Math.floor(Math.random() * WIDTH);
   itemY[itemCount] = Math.floor(Math.random() * HEIGHT);
   itemType[itemCount] = Math.floor(Math.random() * ITEM_TYPE_COUNT);
+  itemDirection[itemCount] = LEFT;
   itemCount += 1;
+  
 }
 
 // cheat for testing combos
