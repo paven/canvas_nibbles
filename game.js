@@ -207,7 +207,7 @@ function detectItemCollisions() {
         switch(itemCombo) {
           case 2: m = 'double item bonus!'; bonusPoints = 1000; break;
           case 3: m = 'triple item bonus!'; bonusPoints = 3000; break;
-          case 4: m = 'QUADRUPLE PENETRATION!@#!#!'; bonusPoints = 10000; itemCombo = 1; break;
+          case 4: m = 'QUADRUPLE!@#!#!'; bonusPoints = 10000; itemCombo = 1; break;
         }
         if(m) {
           messages.push([m, 20, null, null]);
@@ -302,7 +302,7 @@ function gameOver(reason) {
   }
   ctx.font = "20pt Arial";
   ctx.fillStyle = MESSAGE_COLOR;
-  ctx.fillText("Game over, bitches!@#!@#!", WIDTH / 2 - 150, HEIGHT / 2, 300);
+  ctx.fillText("Game over", WIDTH / 2 - 150, HEIGHT / 2, 300);
   ctx.font = "10pt Arial";
   ctx.fillText(message, WIDTH / 2 - 125, HEIGHT / 2 + 20, 250);
   ctx.fillText("press space key to continue", WIDTH / 2 - 75, HEIGHT / 2 + 35, 150);
